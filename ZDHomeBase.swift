@@ -17,7 +17,7 @@ class ZDHomeBase: SKSpriteNode {
             willSet {
                 if newValue == 0 {
                     if delegate != nil {
-                        NSTimer.scheduledTimerWithTimeInterval(0, target: delegate!, selector: "updateEmitter", userInfo: nil, repeats: false)
+                        Timer.scheduledTimer(timeInterval: 0, target: delegate!, selector: #selector(ZDHomeBase.updateEmitter), userInfo: nil, repeats: false)
                     }
                 }
             }
@@ -27,7 +27,7 @@ class ZDHomeBase: SKSpriteNode {
             willSet {
                 if newValue == 0 {
                     if delegate != nil {
-                        NSTimer.scheduledTimerWithTimeInterval(0, target: delegate!, selector: "updateEmitter", userInfo: nil, repeats: false)
+                        Timer.scheduledTimer(timeInterval: 0, target: delegate!, selector: #selector(ZDHomeBase.updateEmitter), userInfo: nil, repeats: false)
                     }
                 }
             }
@@ -36,7 +36,7 @@ class ZDHomeBase: SKSpriteNode {
             willSet {
                 if newValue == 0 {
                     if delegate != nil {
-                        NSTimer.scheduledTimerWithTimeInterval(0, target: delegate!, selector: "updateEmitter", userInfo: nil, repeats: false)
+                        Timer.scheduledTimer(timeInterval: 0, target: delegate!, selector: #selector(ZDHomeBase.updateEmitter), userInfo: nil, repeats: false)
                     }
                 }
             }
@@ -45,14 +45,14 @@ class ZDHomeBase: SKSpriteNode {
             willSet {
                 if newValue == 0 {
                     if delegate != nil {
-                        NSTimer.scheduledTimerWithTimeInterval(0, target: delegate!, selector: "updateEmitter", userInfo: nil, repeats: false)
+                        Timer.scheduledTimer(timeInterval: 0, target: delegate!, selector: #selector(ZDHomeBase.updateEmitter), userInfo: nil, repeats: false)
                     }
                 }
             }
         }
     }
     
-    var location = CGPointZero
+    var location = CGPoint.zero
     
     var projectileType = ProjectileType()
     var projectileEmitterPath = Constants.defaultProjectileEmitterPath()
@@ -66,37 +66,37 @@ class ZDHomeBase: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    required override init() {
-        super.init()
+    required convenience init() {
+        self.init(texture: nil, color: UIColor.white, size: CGSize(width: 0, height: 0))
         projectileType.delegate = self
     }
     
-    required override init(texture: SKTexture!, color: UIColor!, size: CGSize) {
+    required override init(texture: SKTexture!, color: UIColor, size: CGSize) {
         super.init(texture: texture, color: color, size: size)
     }
     
-    func queueShotAt(point: CGPoint) {
+    func queueShotAt(_ point: CGPoint) {
         var shot = [[point]]
         
         if projectileType.waterDuration > 0 {
             let pointVector = VectorOperation.CGVectorFromPoint(point)
             let pointAngleFromBottom = VectorOperation.angle(pointVector)
-            let perpendicularAngle = (pointAngleFromBottom + M_PI / 2) % (M_PI * 2)
-            var perpendicular = CGVectorMake(CGFloat(cos(perpendicularAngle)), CGFloat(sin(perpendicularAngle)))
+            let perpendicularAngle = (pointAngleFromBottom + Double.pi / 2).truncatingRemainder(dividingBy: (Double.pi * 2))
+            var perpendicular = CGVector(dx: CGFloat(cos(perpendicularAngle)), dy: CGFloat(sin(perpendicularAngle)))
             perpendicular = VectorOperation.multiply(perpendicular, scale: 100)
             
-            let pointLeft = CGPointMake(point.x - perpendicular.dx, point.y - perpendicular.dx)
-            let pointRight = CGPointMake(point.x + perpendicular.dx, point.y + perpendicular.dx)
+            let pointLeft = CGPoint(x: point.x - perpendicular.dx, y: point.y - perpendicular.dx)
+            let pointRight = CGPoint(x: point.x + perpendicular.dx, y: point.y + perpendicular.dx)
             shot[0] = shot[0] + [pointLeft, pointRight]
         }
-        shotQueue.extend(shot)
+        shotQueue.append(contentsOf: shot)
     }
     
-    func update(scene: SKScene) {
-        if cannonEmitter.parent != scene {
-            scene.addChild(cannonEmitter)
-            cannonEmitter.position = location
-            cannonEmitter.zPosition = 2
+    func update(_ scene: SKScene) {
+        if cannonEmitter?.parent != scene {
+            scene.addChild(cannonEmitter!)
+            cannonEmitter?.position = location
+            cannonEmitter?.zPosition = 2
         }
         
         if timer == 0 {
@@ -104,22 +104,22 @@ class ZDHomeBase: SKSpriteNode {
                 for point in shotQueue[0] {
                     launchProjectileTowards(point, scene: scene)
                 }
-                shotQueue.removeAtIndex(0)
+                shotQueue.remove(at: 0)
             }
         } else {
-            timer = timer++ % 20
+            timer = (timer + 1) % 20
         }
         
         if projectileType.windDuration > 0 {
-            projectileType.windDuration--
+            projectileType.windDuration -= 1
         }
         
         if projectileType.waterDuration > 0 {
-            projectileType.waterDuration--
+            projectileType.waterDuration -= 1
         }
         
         if projectileType.fireDuration > 0 {
-            projectileType.fireDuration--
+            projectileType.fireDuration -= 1
         }
     }
     
@@ -149,7 +149,7 @@ class ZDHomeBase: SKSpriteNode {
         projectileEmitterPath += "Projectile.sks"
     }
     
-    func launchProjectileTowards(point: CGPoint, scene: SKScene) {
+    func launchProjectileTowards(_ point: CGPoint, scene: SKScene) {
         let projectile = createProjectile()
         
         // Create a vector starting from the projectile ending at the touch and make a norm of that vector
@@ -178,41 +178,41 @@ class ZDHomeBase: SKSpriteNode {
         let speed = projectileType.windDuration > 0 ? Double(scale) / Constants.Projectile.SpeedConstant() / 2: Double(scale) / Constants.Projectile.SpeedConstant()
         
         // Move the projectile with the vector then remove it from the parent once it finishes.
-        let moveAction = SKAction.moveBy(finalVector, duration: speed)
+        let moveAction = SKAction.move(by: finalVector, duration: speed)
         
         projectile.emissionAngle = CGFloat(VectorOperation.angle(finalVector) + M_PI)
-        projectile.runAction(moveAction) {
-            projectile.removeFromParent()}
+        projectile.run(moveAction, completion: {
+            projectile.removeFromParent()}) 
         
         scene.addChild(projectile)
-        println("\(self.projectileType)")
+        print("\(self.projectileType)")
         
     }
     
     func createProjectile() -> SKEmitterNode {
-        var projectile = SKEmitterNode(fileNamed: projectileEmitterPath)
+        let projectile = SKEmitterNode(fileNamed: projectileEmitterPath)
         
-        projectile.name = projectileEmitterPath.stringByReplacingOccurrencesOfString("Projectile.sks", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        projectile.position = location
-        projectile.physicsBody = SKPhysicsBody(rectangleOfSize: Constants.Projectile.projectileSize())
-        projectile.physicsBody?.dynamic = false
-        projectile.physicsBody?.categoryBitMask = Constants.Bitmask.projectileBitmask()
-        projectile.physicsBody?.contactTestBitMask = Constants.Bitmask.enemyBitmask() | Constants.Bitmask.shieldBitmask()
+        projectile?.name = projectileEmitterPath.replacingOccurrences(of: "Projectile.sks", with: "", options: NSString.CompareOptions.literal, range: nil)
+        projectile?.position = location
+        projectile?.physicsBody = SKPhysicsBody(rectangleOf: Constants.Projectile.projectileSize())
+        projectile?.physicsBody?.isDynamic = false
+        projectile?.physicsBody?.categoryBitMask = Constants.Bitmask.projectileBitmask()
+        projectile?.physicsBody?.contactTestBitMask = Constants.Bitmask.enemyBitmask() | Constants.Bitmask.shieldBitmask()
         
-        return projectile
+        return projectile!
     }
     
-    func gainBonus(bonusType: ZDBonus.BonusType) {
+    func gainBonus(_ bonusType: ZDBonus.BonusType) {
         switch bonusType {
-        case .Wind:
+        case .wind:
             projectileType.windDuration += Constants.Bonus.bonusTime()
-        case .Water:
+        case .water:
             projectileType.waterDuration += Constants.Bonus.bonusTime()
-        case .Fire:
+        case .fire:
             projectileType.fireDuration += Constants.Bonus.bonusTime()
-        case .Ammo:
+        case .ammo:
             ZDGameModel.sharedInstance.gainAmmo(5)
-        case .Life:
+        case .life:
             ZDGameModel.sharedInstance.gainLife()
             
         }
@@ -221,11 +221,11 @@ class ZDHomeBase: SKSpriteNode {
     
     func updateEmitter() {
         updateProjectileEmitterPath()
-        let parent = cannonEmitter.parent
-        cannonEmitter.removeFromParent()
+        let parent = cannonEmitter?.parent
+        cannonEmitter?.removeFromParent()
         cannonEmitter = SKEmitterNode(fileNamed: projectileEmitterPath)
-        parent?.addChild(cannonEmitter)
-        cannonEmitter.position = location
+        parent?.addChild(cannonEmitter!)
+        cannonEmitter?.position = location
     }
 
 }

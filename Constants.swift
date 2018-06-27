@@ -13,7 +13,7 @@ class Constants {
     
     class var screenFrame: CGRect {
         get {
-            return UIScreen.mainScreen().bounds
+            return UIScreen.main.bounds
         }
     }
     
@@ -25,37 +25,37 @@ class Constants {
     
     class var screenCenter: CGPoint {
         get {
-            return CGPointMake(screenSize.width / 2, screenSize.height / 2)
+            return CGPoint(x: screenSize.width / 2, y: screenSize.height / 2)
         }
     }
     
     class var rootViewController: ZDGameViewController {
         get {
-            var topController = UIApplication.sharedApplication().keyWindow?.rootViewController
+            var topController = UIApplication.shared.keyWindow?.rootViewController
             
             while (topController!.presentedViewController != nil) {
                 topController = topController?.presentedViewController
             }
             
-            return topController as ZDGameViewController
+            return topController as! ZDGameViewController
         }
     }
     
     class func presentQuickPlayViewController() {
         
-        let viewController: UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("ViewController") as GameViewController
-        viewController.modalTransitionStyle = UIModalTransitionStyle.PartialCurl
+        let viewController: UIViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ViewController") as! GameViewController
+        viewController.modalTransitionStyle = UIModalTransitionStyle.partialCurl
         
-        Constants.rootViewController.presentViewController(viewController, animated: false) {
-            (viewController as GameViewController).playGame()
+        Constants.rootViewController.present(viewController, animated: false) {
+            (viewController as! GameViewController).playGame()
         }
     }
     
     class func presentMenuViewController() {
         
-        let viewController: UIViewController = UIStoryboard(name: "GameMenu", bundle: nil).instantiateViewControllerWithIdentifier("ZViewController") as ZDGameMenuViewController
+        let viewController: UIViewController = UIStoryboard(name: "GameMenu", bundle: nil).instantiateViewController(withIdentifier: "ZViewController") as! ZDGameMenuViewController
         
-        Constants.rootViewController.presentViewController(viewController, animated: false, completion: nil)
+        Constants.rootViewController.present(viewController, animated: false, completion: nil)
     }
     
     class GameData {
@@ -68,8 +68,8 @@ class Constants {
         
         class var playerName: String {
             get {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                return defaults.objectForKey("playerName") != nil ?  defaults.objectForKey(playerNameSaveKey) as String : "Player"
+                let defaults = UserDefaults.standard
+                return defaults.object(forKey: "playerName") != nil ?  defaults.object(forKey: playerNameSaveKey) as! String : "Player"
             }
         }
         
@@ -87,7 +87,7 @@ class Constants {
         
         class var ammoUpdateFrequency: Int {
             get {
-                return 60
+                return 20
             }
         }
         
@@ -97,7 +97,7 @@ class Constants {
             }
         }
         
-        class func scoreMultiplier(killStreak: Int) -> Int {
+        class func scoreMultiplier(_ killStreak: Int) -> Int {
             if killStreak < 40 {
                 return Int(pow(Double(2), Double(killStreak / 10)))
             } else {
@@ -105,7 +105,7 @@ class Constants {
             }
         }
         
-        class func levelIncreasement(scoreMultiplier: Int) -> Double {
+        class func levelIncreasement(_ scoreMultiplier: Int) -> Double {
             switch scoreMultiplier {
             case 1:
                 return 0.6
@@ -143,19 +143,19 @@ class Constants {
         
         class var backgroundSize: CGSize {
             get {
-                return CGSizeMake(screenSize.width * 0.9, screenSize.height * 0.9)
+                return CGSize(width: screenSize.width * 0.9, height: screenSize.height * 0.9)
             }
         }
         
         class var backgroundPosition: CGPoint {
             get {
-                return CGPointMake(screenCenter.x - screenSize.width * 0.05, screenCenter.y)
+                return CGPoint(x: screenCenter.x - screenSize.width * 0.05, y: screenCenter.y)
             }
         }
         
         class var playShipSize: CGSize {
             get {
-                return CGSizeMake(Constants.Enemy.enemySize().width * 2.5, Constants.Enemy.enemySize().height * 4)
+                return CGSize(width: Constants.Enemy.enemySize().width * 2.5, height: Constants.Enemy.enemySize().height * 4)
             }
         }
         
@@ -163,13 +163,13 @@ class Constants {
             get {
                 let x = Constants.screenSize.width * 0.7
                 let y = Constants.screenSize.height * 0.7
-                return CGPointMake(x, y)
+                return CGPoint(x: x, y: y)
             }
         }
         
         class var playButtonPosition: CGPoint {
             get {
-                return CGPointMake(0, backgroundSize.height * 0.3)
+                return CGPoint(x: 0, y: backgroundSize.height * 0.3)
             }
         }
         
@@ -187,18 +187,18 @@ class Constants {
             let xRange = Constants.screenSize.width * 0.1
             let yRange = Constants.screenSize.height * 0.2
             
-            let action = SKAction.customActionWithDuration(M_PI * 2) { node, time in
+            let action = SKAction.customAction(withDuration: Double.pi * 2) { node, time in
                 let t = Double(time)
                 let x = self.playShipPosition.x + (CGFloat(xRange) * CGFloat(path.x(t)))
                 let y = self.playShipPosition.y + (CGFloat(yRange) * CGFloat(path.y(t)))
-                node.position = CGPointMake(x, y)
+                node.position = CGPoint(x: x, y: y)
             }
-            return SKAction.repeatActionForever(action)
+            return SKAction.repeatForever(action)
         }
         
         class var invasionShipSize: CGSize {
             get {
-                return CGSizeMake(Constants.Enemy.enemySize().width * 2.5, Constants.Enemy.enemySize().height * 4)
+                return CGSize(width: Constants.Enemy.enemySize().width * 2.5, height: Constants.Enemy.enemySize().height * 4)
             }
         }
         
@@ -206,13 +206,13 @@ class Constants {
             get {
                 let x = Constants.screenSize.width * 0.65
                 let y = Constants.screenSize.height * 0.2
-                return CGPointMake(x, y)
+                return CGPoint(x: x, y: y)
             }
         }
         
         class var invasionButtonPosition: CGPoint {
             get {
-                return CGPointMake(0, backgroundSize.height * 0.3)
+                return CGPoint(x: 0, y: backgroundSize.height * 0.3)
             }
         }
         
@@ -230,13 +230,13 @@ class Constants {
             let xRange = Constants.screenSize.width * 0.2
             let yRange = Constants.screenSize.height * 0.1
             
-            let action = SKAction.customActionWithDuration(M_PI * 2) { node, time in
+            let action = SKAction.customAction(withDuration: Double.pi * 2) { node, time in
                 let t = Double(time)
                 let x = self.invasionShipPosition.x + (CGFloat(xRange) * CGFloat(path.x(t)))
                 let y = self.invasionShipPosition.y + (CGFloat(yRange) * CGFloat(path.y(t)))
-                node.position = CGPointMake(x, y)
+                node.position = CGPoint(x: x, y: y)
             }
-            return SKAction.repeatActionForever(action)
+            return SKAction.repeatForever(action)
         }
         
     }
@@ -248,7 +248,7 @@ class Constants {
         }
         
         class func BlackInAnimation() -> SKAction {
-            return SKAction.customActionWithDuration(FadeAnimationDuration()) { node, time in
+            return SKAction.customAction(withDuration: FadeAnimationDuration()) { node, time in
                 let timePercent = Double(time) / self.FadeAnimationDuration()
                 let timeSquared = timePercent * timePercent
                 node.alpha = CGFloat(1 - timeSquared)
@@ -256,7 +256,7 @@ class Constants {
         }
         
         class func BlackOutAnimation() -> SKAction {
-            return SKAction.customActionWithDuration(FadeAnimationDuration()) { node, time in
+            return SKAction.customAction(withDuration: FadeAnimationDuration()) { node, time in
                 let timePercent = Double(time) / self.FadeAnimationDuration()
                 let timeSquared = timePercent * timePercent
                 node.alpha = CGFloat(timeSquared)
@@ -267,19 +267,19 @@ class Constants {
     class HUD {
         
         class func MultiplierBarFrame() -> CGRect {
-            return CGRectMake(0, (screenSize.height * -0.385), screenSize.width * 0.563, screenSize.height * 0.031)
+            return CGRect(x: 0, y: (screenSize.height * -0.385), width: screenSize.width * 0.563, height: screenSize.height * 0.031)
         }
         
         class func MultiplierBarx1Color() -> UIColor {
-            return UIColor.whiteColor()
+            return UIColor.white
         }
         
         class func MultiplierBarx2Color() -> UIColor {
-            return UIColor.greenColor()
+            return UIColor.green
         }
         
         class func MultiplierBarx4Color() -> UIColor {
-            return UIColor.redColor()
+            return UIColor.red
         }
         
         class func MultiplierBarx8Color() -> UIColor {
@@ -299,7 +299,7 @@ class Constants {
         }
         
         class func FontColor() -> UIColor {
-            return UIColor.whiteColor()
+            return UIColor.white
         }
         
         class func ScoreLabelText() -> String {
@@ -311,7 +311,7 @@ class Constants {
         }
         
         class func ScoreLabelPosition() -> CGPoint {
-            return CGPointMake(screenSize.width * -0.3, LabelY())
+            return CGPoint(x: screenSize.width * -0.3, y: LabelY())
         }
         
         class func AmmoLabelText() -> String {
@@ -319,7 +319,7 @@ class Constants {
         }
         
         class func AmmoLabelPosition() -> CGPoint {
-            return CGPointMake(screenSize.width * 0.055, LabelY())
+            return CGPoint(x: screenSize.width * 0.055, y: LabelY())
         }
         
         class func LifeLabelText() -> String {
@@ -327,7 +327,7 @@ class Constants {
         }
         
         class func LifeLabelPosition() -> CGPoint {
-            return CGPointMake(screenSize.width * 0.22, LabelY())
+            return CGPoint(x: screenSize.width * 0.22, y: LabelY())
         }
         
         class func MultiplierLabelText() -> String {
@@ -335,7 +335,7 @@ class Constants {
         }
         
         class func MultiplierLabelPosition() -> CGPoint {
-            return CGPointMake(screenSize.width * 0.365, screenSize.height * -0.4)
+            return CGPoint(x: screenSize.width * 0.365, y: screenSize.height * -0.4)
         }
         
         class func MultiplierTextColor() -> UIColor {
@@ -349,7 +349,7 @@ class Constants {
             case 8:
                 return Constants.HUD.MultiplierBarx8Color()
             default:
-                return UIColor.whiteColor()
+                return UIColor.white
             }
         }
         
@@ -399,17 +399,17 @@ class Constants {
         }
         
         class func HighScoreSize() -> CGSize {
-            return CGSizeMake(screenSize.width, HUD.ScrollUpDistance())
+            return CGSize(width: screenSize.width, height: HUD.ScrollUpDistance())
         }
         
         class func HighScorePosition() -> CGPoint {
-            return CGPointMake(0, (-screenSize.height - HighScoreSize().height) * 0.5)
+            return CGPoint(x: 0, y: (-screenSize.height - HighScoreSize().height) * 0.5)
         }
         
         class func DataPath() -> String {
-            let documentDirectories = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-            let documentDirectory = documentDirectories[0] as String
-            return documentDirectory.stringByAppendingPathComponent("highScore.archive")
+            let documentDirectories = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+            let documentDirectory = documentDirectories.first! as NSString
+            return documentDirectory.appendingPathComponent("highScore.archive")
         }
         
         class var nameKey: String {
@@ -431,11 +431,11 @@ class Constants {
         }
         
         class func ReplayButtonSize() -> CGSize {
-            return CGSizeMake(screenSize.height * 0.1 , screenSize.height * 0.1)
+            return CGSize(width: screenSize.height * 0.1 , height: screenSize.height * 0.1)
         }
         
         class func ReplayButtonLocation() -> CGPoint {
-            return CGPointMake(screenSize.width * 0.46, screenSize.height * -0.33)
+            return CGPoint(x: screenSize.width * 0.46, y: screenSize.height * -0.33)
         }
         
         class func ReplayButtonName() -> String {
@@ -447,7 +447,7 @@ class Constants {
         }
         
         class func HomeButtonLocation() -> CGPoint {
-            return CGPointMake(screenSize.width * -0.46, ReplayButtonLocation().y)
+            return CGPoint(x: screenSize.width * -0.46, y: ReplayButtonLocation().y)
         }
         
         class func HomeButtonName() -> String {
@@ -479,7 +479,7 @@ class Constants {
     class Projectile {
     
         class func projectileSize() -> CGSize {
-            return CGSizeMake(screenSize.height / 8, screenSize.height / 8)
+            return CGSize(width: screenSize.height / 8, height: screenSize.height / 8)
         }
         
         class func SpeedConstant() -> Double {
@@ -524,11 +524,11 @@ class Constants {
     
         class func SpawnRate() -> UInt32 {
             let x = ZDGameModel.sharedInstance.level
-            return UInt32(1000/x) + 30
+            return UInt32(1000/x) + 2
         }
         
         class func enemySize() -> CGSize {
-            return CGSizeMake(screenSize.height / 6, screenSize.height / 10)
+            return CGSize(width: screenSize.height / 6, height: screenSize.height / 10)
         }
         
         class func movementDuration() -> Double {
@@ -541,12 +541,12 @@ class Constants {
         }
         
         class func minSpawnTime() -> Int {
-            return 20
+            return 5
         }
         
         class func maxSpawnTime() -> Int {
             let x = ZDGameModel.sharedInstance.level
-            let spawn = Int(-30 * sin(x * (1 / (10 * M_PI)))) + 100
+            let spawn = Int(-30 * sin(x * (1 / (10 * Double.pi)))) + 100
             return spawn
         }
         
@@ -555,7 +555,7 @@ class Constants {
         }
         
         class func DestroyAnimation() -> SKAction {
-            return SKAction.customActionWithDuration(DestroyDuration()) { node, time in
+            return SKAction.customAction(withDuration: DestroyDuration()) { node, time in
                 let timePercent = Double(time) / self.DestroyDuration()
                 let timeSquared = timePercent * timePercent
                 node.alpha = CGFloat(1.5 - timeSquared)
@@ -569,8 +569,8 @@ class Constants {
     }
     
     class Cannon {
-        class func cannonPosition(player: SKNode) -> CGPoint {
-            return CGPointMake(screenSize.width  * 0.29, screenSize.height * 0.44)
+        class func cannonPosition(_ player: SKNode) -> CGPoint {
+            return CGPoint(x: screenSize.width  * 0.29, y: screenSize.height * 0.44)
         }
         
     }
@@ -658,15 +658,15 @@ class Constants {
     class Bonus {
     
         class func windBonusChance() -> Double {
-            return 0.15
+            return 0.5
         }
         
         class func waterBonusChance() -> Double {
-            return 0.15
+            return 0.5
         }
         
         class func fireBonusChance() -> Double {
-            return 0.3
+            return 0.5
         }
         
         class func ammoBonusChance() -> Double {
@@ -678,7 +678,7 @@ class Constants {
         }
         
         class func bonusSize() -> CGSize {
-            return CGSizeMake(screenSize.height / 8, screenSize.height / 8)
+            return CGSize(width: screenSize.height / 8, height: screenSize.height / 8)
         }
         
         class func bonusTime() -> Int {

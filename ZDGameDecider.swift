@@ -40,7 +40,7 @@ class ZDEnemyLauncher: NSObject {
     
     var timer = 0
 
-    func addScene(scene: SKScene) {
+    func addScene(_ scene: SKScene) {
         self.scene = scene
     }
     
@@ -53,7 +53,7 @@ class ZDEnemyLauncher: NSObject {
                 timer = 0
             }
         }
-        timer++
+        timer += 1
     }
     
     func shouldLaunchEnemy() -> Bool {
@@ -64,30 +64,30 @@ class ZDEnemyLauncher: NSObject {
         let enemy = ZDEnemyShip(size: Constants.Enemy.enemySize())
         let movementDuration = Constants.Enemy.movementDuration() / enemy.relativeSpeed
         
-        let movement = SKAction.customActionWithDuration(movementDuration) { node, time in
-            var startY = (self.scene!.size.height * (2/3.0))
-            var range = (self.scene!.size.height - startY - enemy.size.height / 2)
+        let movement = SKAction.customAction(withDuration: movementDuration) { node, time in
+            let startY = (self.scene!.size.height * (2/3.0))
+            let range = (self.scene!.size.height - startY - enemy.size.height / 2)
             
             let timePercent = Double(time) / movementDuration
             let xPos = self.scene!.size.width - self.scene!.size.width * CGFloat(enemy.level.x(timePercent))
             let yPos = startY + range * CGFloat(enemy.level.y(timePercent))
-            node.position = CGPointMake(xPos, yPos)
+            node.position = CGPoint(x: xPos, y: yPos)
         }
         
-        enemy.runAction(movement) {
+        enemy.run(movement, completion: {
             enemy.remove()
             if let gameScene = self.scene as? GameScene {
                 gameScene.enemyEscaped()
             }
-        }
+        }) 
         
-        enemy.trailEmitter.runAction(movement) {
+        enemy.trailEmitter.run(movement, completion: {
             enemy.trailEmitter.removeFromParent()
-        }
+        }) 
         
-        enemy.shieldEmitter.runAction(movement) {
+        enemy.shieldEmitter.run(movement, completion: {
             enemy.shieldEmitter.removeFromParent()
-        }
+        }) 
         
         scene!.addChild(enemy.shieldEmitter)
         scene!.addChild(enemy.trailEmitter)

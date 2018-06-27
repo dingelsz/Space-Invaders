@@ -10,13 +10,13 @@ import UIKit
 import SpriteKit
 
 extension SKNode {
-    class func unarchiveFromFile(file : NSString) -> SKNode? {
-        if let path = NSBundle.mainBundle().pathForResource(file, ofType: "sks") {
-            var sceneData = NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe, error: nil)
-            var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData!)
+    class func unarchiveFromFile(_ file : NSString) -> SKNode? {
+        if let path = Bundle.main.path(forResource: file as String, ofType: "sks") {
+            let sceneData : Data = NSData.dataWithContentsOfMappedFile(path) as! Data
+            let archiver = NSKeyedUnarchiver(forReadingWith: sceneData)
             
             archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
-            let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as GameScene
+            let scene = archiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! GameScene
             archiver.finishDecoding()
             return scene
         } else {
@@ -31,20 +31,20 @@ class GameViewController: ZDGameViewController {
         super.viewDidLoad()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         playGame()
     }
 
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return true
     }
 
-    override func supportedInterfaceOrientations() -> Int {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return Int(UIInterfaceOrientationMask.AllButUpsideDown.rawValue)
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return UIInterfaceOrientationMask.allButUpsideDown
         } else {
-            return Int(UIInterfaceOrientationMask.All.rawValue)
+            return UIInterfaceOrientationMask.all
         }
     }
 
@@ -53,14 +53,14 @@ class GameViewController: ZDGameViewController {
         // Release any cached data, images, etc that aren't in use.
     }
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
     
-    override func presentViewController(viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?) {
-        super.presentViewController(viewControllerToPresent, animated: flag, completion: completion)
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?) {
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
         // Remove the old scene.
-        let skView = self.view as SKView
+        let skView = self.view as! SKView
         skView.presentScene(nil)
     }
     
@@ -68,13 +68,13 @@ class GameViewController: ZDGameViewController {
         let scene: GameScene = GameScene(size: Constants.screenSize)
         
         // Configure the view.
-        let skView = self.view as SKView
+        let skView = self.view as! SKView
         
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true
         
         /* Set the scale mode to scale to fit the window */
-        scene.scaleMode = .AspectFill
+        scene.scaleMode = .aspectFill
         
         ZDGameModel.sharedInstance.restart()
         

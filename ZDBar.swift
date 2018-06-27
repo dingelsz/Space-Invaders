@@ -13,9 +13,9 @@ class ZDBar: SKSpriteNode {
     
     var fillPercent: Double = 0.0 {
         willSet {
-            self.size = CGSizeMake(fullSize.width * CGFloat(newValue), fullSize.height)
+            self.size = CGSize(width: fullSize.width * CGFloat(newValue), height: fullSize.height)
         }
     }
-    var fullSize = CGSizeZero
+    var fullSize = CGSize.zero
     
 }

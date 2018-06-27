@@ -49,7 +49,7 @@ class ZDGameModel: NSObject {
         return Singleton.instance
     }
     
-    private var timer = 0
+    fileprivate var timer = 0
     
     var lifes: Int = Constants.GameData.beginningNumberOfLives {
         willSet {
@@ -73,7 +73,7 @@ class ZDGameModel: NSObject {
     var ammo: Int = Constants.GameData.beginningAmmo
     var kills: Int = 0 {
         willSet {
-            killStreak++
+            killStreak += 1
         }
     }
     var killStreak: Int = 0 {
@@ -81,14 +81,14 @@ class ZDGameModel: NSObject {
             level += Constants.GameData.levelIncreasement(scoreMultiplier)
         }
     }
-    var level: Double = 1
+    var level: Double = 0
     var isGameOver = false
     let highScores = ZDHighScoreModel()
     var playerName = Constants.GameData.playerName
     
     func save() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(playerName, forKey: Constants.GameData.playerNameSaveKey)
+        let defaults = UserDefaults.standard
+        defaults.set(playerName, forKey: Constants.GameData.playerNameSaveKey)
         
         defaults.synchronize()
         highScores.save()
@@ -110,13 +110,13 @@ class ZDGameModel: NSObject {
             gainAmmo(1)
         }
         
-        timer++
+        timer += 1
     }
     
     func loseLife() {
         if isGameOver {return}
         if hasLives() {
-            lifes--
+            lifes -= 1
         }
     }
     
@@ -139,20 +139,20 @@ class ZDGameModel: NSObject {
         return timer
     }
     
-    func killEnemy(enemyType: ZDEnemyShip.EnemyType) {
+    func killEnemy(_ enemyType: ZDEnemyShip.EnemyType) {
         if isGameOver {return}
         if hasLives() {
-            kills++
+            kills += 1
         }
         
         switch enemyType {
-        case .Scout:
+        case .scout:
             score += Constants.Enemy.ScoutScore() * scoreMultiplier
-        case .Tank:
+        case .tank:
             score += Constants.Enemy.TankScore() * scoreMultiplier
-        case .Speedster:
+        case .speedster:
             score += Constants.Enemy.SpeedsterScore() * scoreMultiplier
-        case .Ace:
+        case .ace:
             score += Constants.Enemy.AceScore() * scoreMultiplier
         }
     }
@@ -163,10 +163,10 @@ class ZDGameModel: NSObject {
     
     func shoot() {
         if isGameOver {return}
-        ammo--
+        ammo -= 1
     }
     
-    func gainAmmo(n: Int) {
+    func gainAmmo(_ n: Int) {
         if isGameOver {return}
         if ammo + n > Constants.GameData.maxNumberOfAmmo {
             ammo = Constants.GameData.maxNumberOfAmmo - n

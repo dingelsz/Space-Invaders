@@ -21,12 +21,15 @@ class ZDSpriteMenuNode: SKSpriteNode {
         super.init(texture: texture, color: color, size: size)
     }
     
-    override init() {
-        super.init()
-        self.color = Constants.Menu.backgroundColor
-        self.size = Constants.Menu.backgroundSize
+    convenience init() {
+        let aColor = Constants.Menu.backgroundColor
+        let aSize = Constants.Menu.backgroundSize
+        self.init(texture: nil, color: aColor, size: aSize)
+        
+        self.color = aColor
+        self.size = aSize
         self.position = Constants.Menu.backgroundPosition
-        self.userInteractionEnabled = true
+        self.isUserInteractionEnabled = true
         self.zPosition = 1
         
         initPlayButton()
@@ -34,20 +37,20 @@ class ZDSpriteMenuNode: SKSpriteNode {
     
     func initPlayButton() {
         playButton.position = Constants.Menu.playButtonPosition
-        playButton.size = CGSizeMake(size.width, size.width * 0.13)
+        playButton.size = CGSize(width: size.width, height: size.width * 0.13)
         playButton.name = "play"
-        playButton.setButtonAction(self, triggerEvent: FTButtonNode.FTButtonActionType.TouchUp, action: "transitionOutThen")
+        playButton.setButtonAction(self, triggerEvent: FTButtonNode.FTButtonActionType.touchUp, action: #selector(ZDSpriteMenuNode.transitionOutThen))
         addChild(playButton)
     }
     
     func transitionOutThen() {
-        let backdrop = SKSpriteNode(color: UIColor.blackColor(), size: Constants.screenSize)
-        backdrop.position = CGPointMake(Constants.screenSize.width - size.width, 0)
+        let backdrop = SKSpriteNode(color: UIColor.black, size: Constants.screenSize)
+        backdrop.position = CGPoint(x: Constants.screenSize.width - size.width, y: 0)
         backdrop.zPosition = 4
         addChild(backdrop)
-        backdrop.runAction(Constants.Animations.BlackOutAnimation()) {
+        backdrop.run(Constants.Animations.BlackOutAnimation(), completion: {
             Constants.presentQuickPlayViewController()
-        }
+        }) 
     }
     
 }

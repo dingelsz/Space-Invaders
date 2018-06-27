@@ -18,16 +18,16 @@ class HighScore: NSObject, NSCoding {
     }
     
     required init(coder aDecoder: NSCoder) {
-        name = aDecoder.decodeObjectForKey(Constants.HighScore.nameKey) as String
-        score = aDecoder.decodeIntegerForKey(Constants.HighScore.scoreKey)
+        name = aDecoder.decodeObject(forKey: Constants.HighScore.nameKey) as! String
+        score = aDecoder.decodeInteger(forKey: Constants.HighScore.scoreKey)
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        if (name.rangeOfString(Constants.HighScore.editMessage) != nil) {
-            name = name.stringByReplacingOccurrencesOfString(Constants.HighScore.editMessage, withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
+    func encode(with aCoder: NSCoder) {
+        if (name.range(of: Constants.HighScore.editMessage) != nil) {
+            name = name.replacingOccurrences(of: Constants.HighScore.editMessage, with: "", options: NSString.CompareOptions.literal, range: nil)
         }
-        aCoder.encodeObject(name, forKey: Constants.HighScore.nameKey)
-        aCoder.encodeInteger(score, forKey: Constants.HighScore.scoreKey)
+        aCoder.encode(name, forKey: Constants.HighScore.nameKey)
+        aCoder.encode(score, forKey: Constants.HighScore.scoreKey)
     }
 }
 
@@ -40,10 +40,10 @@ class ZDHighScoreModel: NSObject {
         HighScore(name: Constants.GameData.playerName, score: 0),
         HighScore(name: Constants.GameData.playerName, score: 0)]
     
-    private var dataPath = Constants.HighScore.DataPath()
+    fileprivate var dataPath = Constants.HighScore.DataPath()
     
     override init() {
-        if let data = NSKeyedUnarchiver.unarchiveObjectWithFile(dataPath) as? [HighScore]? {
+        if let data = NSKeyedUnarchiver.unarchiveObject(withFile: dataPath) as? [HighScore]? {
             if data != nil {
                 scores = data!
             }
@@ -53,19 +53,19 @@ class ZDHighScoreModel: NSObject {
     
     func save() {
         if NSKeyedArchiver.archiveRootObject(scores, toFile: dataPath) {
-            println("Scores Saved")
+            print("Scores Saved")
         } else {
-            println("Scores Not saved")
+            print("Scores Not saved")
         }
     }
     
-    func isHighScore(score: Int) -> Bool {
+    func isHighScore(_ score: Int) -> Bool {
         return scores.filter{$0.score < score}.count > 0
     }
     
-    func addScore(name: String, score n: Int) {
+    func addScore(_ name: String, score n: Int) {
         let newScoreIndex = scores.filter{$0.score > n}.count
-        scores.insert(HighScore(name: name + " " + Constants.HighScore.editMessage, score: n), atIndex: newScoreIndex)
+        scores.insert(HighScore(name: name + " " + Constants.HighScore.editMessage, score: n), at: newScoreIndex)
         scores.removeLast()
     }
     

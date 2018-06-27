@@ -4,8 +4,8 @@ import SpriteKit
 class FTButtonNode: SKSpriteNode {
     
     enum FTButtonActionType: Int {
-        case TouchUpInside = 1,
-        TouchDown, TouchUp
+        case touchUpInside = 1,
+        touchDown, touchUp
     }
     
     var isEnabled: Bool = true {
@@ -33,13 +33,13 @@ class FTButtonNode: SKSpriteNode {
         self.selectedTexture = selectedTexture
         self.disabledTexture = disabledTexture
         
-        super.init(texture: defaultTexture, color: UIColor.whiteColor(), size: defaultTexture.size())
+        super.init(texture: defaultTexture, color: UIColor.white, size: defaultTexture.size())
         
-        userInteractionEnabled = true
+        isUserInteractionEnabled = true
         
         // Adding this node as an empty layer. Without it the touch functions are not being called
         // The reason for this is unknown when this was implemented...?
-        let bugFixLayerNode = SKSpriteNode(texture: nil, color: nil, size: defaultTexture.size())
+        let bugFixLayerNode = SKSpriteNode(texture: nil, color: UIColor.white, size: defaultTexture.size())
         bugFixLayerNode.position = self.position
         addChild(bugFixLayerNode)
         
@@ -48,16 +48,16 @@ class FTButtonNode: SKSpriteNode {
     /**
     * Taking a target object and adding an action that is triggered by a button event.
     */
-    func setButtonAction(target: AnyObject, triggerEvent event:FTButtonActionType, action:Selector) {
+    func setButtonAction(_ target: AnyObject, triggerEvent event:FTButtonActionType, action:Selector) {
         
         switch (event) {
-        case .TouchUpInside:
+        case .touchUpInside:
             targetTouchUpInside = target
             actionTouchUpInside = action
-        case .TouchDown:
+        case .touchDown:
             targetTouchDown = target
             actionTouchDown = action
-        case .TouchUp:
+        case .touchUp:
             targetTouchUp = target
             actionTouchUp = action
         }
@@ -72,31 +72,29 @@ class FTButtonNode: SKSpriteNode {
     weak var targetTouchUp: AnyObject?
     weak var targetTouchDown: AnyObject?
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent)  {
-        let touch: AnyObject! = touches.anyObject()
-        let touchLocation = touch.locationInNode(parent)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)  {
         
         if (!isEnabled) {
             return
         }
         isSelected = true
-        if (targetTouchDown != nil && targetTouchDown!.respondsToSelector(actionTouchDown!)) {
-            UIApplication.sharedApplication().sendAction(actionTouchDown!, to: targetTouchDown, from: self, forEvent: nil)
+        if (targetTouchDown != nil && targetTouchDown!.responds(to: actionTouchDown!)) {
+            UIApplication.shared.sendAction(actionTouchDown!, to: targetTouchDown, from: self, for: nil)
         }
         
         
     }
     
-    override func touchesMoved(touches: NSSet, withEvent event: UIEvent)  {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)  {
         
         if (!isEnabled) {
             return
         }
         
-        let touch: AnyObject! = touches.anyObject()
-        let touchLocation = touch.locationInNode(parent)
+        let touch: UITouch = touches.first!
+        let touchLocation = touch.location(in: parent!)
         
-        if (CGRectContainsPoint(frame, touchLocation)) {
+        if ((frame).contains(touchLocation)) {
             isSelected = true
         } else {
             isSelected = false
@@ -104,7 +102,7 @@ class FTButtonNode: SKSpriteNode {
         
     }
     
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         if (!isEnabled) {
             return
@@ -112,18 +110,18 @@ class FTButtonNode: SKSpriteNode {
         
         isSelected = false
         
-        if (targetTouchUpInside != nil && targetTouchUpInside!.respondsToSelector(actionTouchUpInside!)) {
-            let touch: AnyObject! = touches.anyObject()
-            let touchLocation = touch.locationInNode(parent)
+        if (targetTouchUpInside != nil && targetTouchUpInside!.responds(to: actionTouchUpInside!)) {
+            let touch: UITouch = touches.first!
+            let touchLocation = touch.location(in: parent!)
             
-            if (CGRectContainsPoint(frame, touchLocation) ) {
-                UIApplication.sharedApplication().sendAction(actionTouchUpInside!, to: targetTouchUpInside, from: self, forEvent: nil)
+            if ((frame).contains(touchLocation) ) {
+                UIApplication.shared.sendAction(actionTouchUpInside!, to: targetTouchUpInside, from: self, for: nil)
             }
             
         }
         
-        if (targetTouchUp != nil && targetTouchUp!.respondsToSelector(actionTouchUp!)) {
-            UIApplication.sharedApplication().sendAction(actionTouchUp!, to: targetTouchUp, from: self, forEvent: nil)
+        if (targetTouchUp != nil && targetTouchUp!.responds(to: actionTouchUp!)) {
+            UIApplication.shared.sendAction(actionTouchUp!, to: targetTouchUp, from: self, for: nil)
         }
     }
     

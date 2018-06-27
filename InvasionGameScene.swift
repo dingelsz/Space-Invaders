@@ -67,7 +67,7 @@ class InvasionGameScene: SKScene, SKPhysicsContactDelegate {
     let cannon = ZDHomeBase()
     
     
-    let backdrop = SKSpriteNode(color: UIColor.blackColor(), size: Constants.screenSize)
+    let backdrop = SKSpriteNode(color: UIColor.black, size: Constants.screenSize)
     let background = SKSpriteNode(imageNamed: Constants.ImagePath.playerImagePath())
     let hud = ZDHud(size: Constants.screenSize)
     
@@ -76,14 +76,14 @@ class InvasionGameScene: SKScene, SKPhysicsContactDelegate {
         backdrop.zPosition = 4
         addChild(backdrop)
         
-        backdrop.runAction(Constants.Animations.BlackInAnimation()) {
+        backdrop.run(Constants.Animations.BlackInAnimation(), completion: {
             self.backdrop.removeFromParent()
-        }
+        }) 
     }
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         playLoadingFade()
-        physicsWorld.gravity = CGVectorMake(0, 0)
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         physicsWorld.contactDelegate = self
         
         enemyLauncher.addScene(self)
@@ -103,7 +103,7 @@ class InvasionGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(background)
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         if gameModel.outOfLifes() && !gameModel.isGameOver {
             gameOver()
         }
@@ -116,12 +116,12 @@ class InvasionGameScene: SKScene, SKPhysicsContactDelegate {
         enemyLauncher.decide()
     }
     
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Called when a touch ends */
         for touch: AnyObject in touches {
             // Create the projectile and put it where the player is
-            let location = touch.locationInNode(self)
-            let touchedNode = nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let touchedNode = atPoint(location)
             
             // If the node is a bonus then gain it, if not shoot em'
             if let bonus = touchedNode as? ZDBonus {
@@ -134,14 +134,14 @@ class InvasionGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func shootCannon(location: CGPoint) {
+    func shootCannon(_ location: CGPoint) {
         if gameModel.hasAmmo() {
             cannon.queueShotAt(location)
             gameModel.shoot()
         }
     }
     
-    func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
         var firstBody: SKPhysicsBody
         var secondBody: SKPhysicsBody
         
@@ -157,7 +157,7 @@ class InvasionGameScene: SKScene, SKPhysicsContactDelegate {
         if (firstBody.categoryBitMask & Constants.Bitmask.projectileBitmask()) != 0 && (secondBody.categoryBitMask & Constants.Bitmask.enemyBitmask()) != 0 {
             if let ship = secondBody.node as? ZDEnemyShip {
                 // Collision while in animation, ignore this it will add two kills
-                if firstBody.node!.name!.rangeOfString("fire") != nil {
+                if firstBody.node!.name!.range(of: "fire") != nil {
                     ship.takeHit()
                 }
                 
@@ -174,15 +174,15 @@ class InvasionGameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func destroyEnemy(ship: ZDEnemyShip) {
+    func destroyEnemy(_ ship: ZDEnemyShip) {
         let bonus: ZDBonus? = ZDBonus.maybeBonusFor(ship.type)
         
         ship.destroy()
         
         if bonus != nil {
             bonus?.position = ship.position
-            bonus?.emitter.position = ship.position
-            addChild(bonus!.emitter)
+            bonus?.emitter?.position = ship.position
+            addChild(bonus!.emitter!)
             addChild(bonus!)
         }
         

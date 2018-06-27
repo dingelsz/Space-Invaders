@@ -11,13 +11,13 @@ import SpriteKit
 
 class ZDHud: SKSpriteNode {
     
-    let multiplierBar = ZDBar(color: UIColor.whiteColor(), size: CGSizeZero)
+    let multiplierBar = ZDBar(color: UIColor.white, size: CGSize.zero)
     
     let scoreLabel = SKLabelNode(fontNamed: Constants.HUD.FontName())
     let ammoLabel = SKLabelNode(fontNamed: Constants.HUD.FontName())
     let lifesLabel = SKLabelNode(fontNamed: Constants.HUD.FontName())
     let multiplierLabel = SKLabelNode(fontNamed: Constants.HUD.FontName())
-    let highScoreView = ZDHighScoreView(size: Constants.HighScore.HighScoreSize())
+    let highScoreView = ZDHighScoreView(theSize: Constants.HighScore.HighScoreSize())
     
     
     
@@ -47,28 +47,28 @@ class ZDHud: SKSpriteNode {
         scoreLabel.fontSize = Constants.HUD.FontSize()
         scoreLabel.position = Constants.HUD.ScoreLabelPosition()
         scoreLabel.zPosition = 2
-        scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         addChild(scoreLabel)
         
         ammoLabel.fontColor = Constants.HUD.FontColor()
         ammoLabel.fontSize = Constants.HUD.FontSize()
         ammoLabel.position = Constants.HUD.AmmoLabelPosition()
         ammoLabel.zPosition = 2
-        ammoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        ammoLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         addChild(ammoLabel)
         
         lifesLabel.fontColor = Constants.HUD.FontColor()
         lifesLabel.fontSize = Constants.HUD.FontSize()
         lifesLabel.position = Constants.HUD.LifeLabelPosition()
         lifesLabel.zPosition = 2
-        lifesLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        lifesLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         addChild(lifesLabel)
         
         multiplierLabel.fontColor = Constants.HUD.FontColor()
         multiplierLabel.fontSize = Constants.HUD.MultiplierFontSize()
         multiplierLabel.position = Constants.HUD.MultiplierLabelPosition()
         multiplierLabel.zPosition = 2
-        multiplierLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        multiplierLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         addChild(multiplierLabel)
     }
     
@@ -98,7 +98,7 @@ class ZDHud: SKSpriteNode {
         case 8:
             multiplierBar.color = Constants.HUD.MultiplierBarx8Color()
         default:
-            multiplierBar.color = UIColor.whiteColor()
+            multiplierBar.color = UIColor.white
         }
     }
     
@@ -110,18 +110,18 @@ class ZDHud: SKSpriteNode {
     func scrollUp() {
         let moveByY: CGFloat = Constants.HUD.ScrollUpDistance()
         let initialY = position.y
-        let rampScrollAction = SKAction.customActionWithDuration(Constants.HUD.ScrollUpTime()) { node, time in
+        let rampScrollAction = SKAction.customAction(withDuration: Constants.HUD.ScrollUpTime()) { node, time in
             let timePercent = Double(time) / Constants.HUD.ScrollUpTime()
             let displacement = CGFloat(sqrt(pow(timePercent, 5)) * Double(moveByY))
-            node.position = CGPointMake(node.position.x, initialY + displacement)
+            node.position = CGPoint(x: node.position.x, y: initialY + displacement)
         }
         
-        self.runAction(rampScrollAction)
+        self.run(rampScrollAction)
         
-        multiplierLabel.hidden = true
+        multiplierLabel.isHidden = true
     }
     
-    func updatHighScores(index: Int?) {
+    func updatHighScores(_ index: Int?) {
         highScoreView.currentHighScoreIndex = index
         highScoreView.update()
     }

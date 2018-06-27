@@ -172,7 +172,7 @@ class ZDLevels {
         }
         
         func yFunc(time t: Double) -> Double {
-            return sin(t * 2 * M_PI)
+            return sin(t * 2 * Double.pi)
         }
         
         return Level(x: xFunc, y: yFunc, length: 4.19)
@@ -185,7 +185,7 @@ class ZDLevels {
         }
         
         func yFunc(time t: Double) -> Double {
-            return sin(t * 4 * M_PI) * t * t
+            return sin(t * 4 * Double.pi) * t * t
         }
         
         return Level(x: xFunc, y: yFunc, length: 8.11)
@@ -198,7 +198,7 @@ class ZDLevels {
         }
         
         func yFunc(time t: Double) -> Double {
-            return cos(t * 2 * M_PI)
+            return cos(t * 2 * Double.pi)
         }
         
         return Level(x: xFunc, y: yFunc, length: 4.19)
@@ -211,7 +211,7 @@ class ZDLevels {
         }
         
         func yFunc(time t: Double) -> Double {
-            return cos(t * 4 * M_PI)
+            return cos(t * 4 * Double.pi)
         }
         
         return Level(x: xFunc, y: yFunc, length: 8.11)
@@ -219,7 +219,7 @@ class ZDLevels {
     
     class func sDown() -> Level {
         func xFunc(time t: Double) -> Double {
-            return (-cos(t * 3 * M_PI) + 1) / 2
+            return (-cos(t * 3 * Double.pi) + 1) / 2
             
         }
         
@@ -232,7 +232,7 @@ class ZDLevels {
     
     class func sUp() -> Level {
         func xFunc(time t: Double) -> Double {
-            return (-cos(t * 3 * M_PI) + 1) / 2
+            return (-cos(t * 3 * Double.pi) + 1) / 2
             
         }
         
@@ -245,7 +245,7 @@ class ZDLevels {
     
     class func halfSDown() -> Level {
         func xFunc(time t: Double) -> Double {
-            return (-cos(t * 3 * M_PI) + 1) / 2 * t
+            return (-cos(t * 3 * Double.pi) + 1) / 2 * t
             
         }
         
@@ -258,7 +258,7 @@ class ZDLevels {
     
     class func halfSUp() -> Level {
         func xFunc(time t: Double) -> Double {
-            return (-cos(t * 3 * M_PI) + 1) / 2 * t
+            return (-cos(t * 3 * Double.pi) + 1) / 2 * t
             
         }
         
@@ -290,7 +290,7 @@ class ZDLevels {
         }
         
         func yFunc(time t: Double) -> Double {
-            return sin((2 * t - 0.8) * 4 * M_PI) * pow((2 * t - 1), 2)
+            return sin((2 * t - 0.8) * 4 * Double.pi) * pow((2 * t - 1), 2)
         }
         
         return Level(x: xFunc, y: yFunc, length: 5.77)
@@ -303,7 +303,7 @@ class ZDLevels {
         }
         
         func yFunc(time t: Double) -> Double {
-            return sin(t * 4 * M_PI) * t * t
+            return sin(t * 4 * Double.pi) * t * t
         }
         
         return Level(x: xFunc, y: yFunc, length: 3.11)
@@ -316,7 +316,7 @@ class ZDLevels {
         }
         
         func yFunc(time t: Double) -> Double {
-            return sin((t - 1) * 4 * M_PI) * pow(t - 1, 2)
+            return sin((t - 1) * 4 * Double.pi) * pow(t - 1, 2)
         }
         
         return Level(x: xFunc, y: yFunc, length: 3.11)

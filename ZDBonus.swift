@@ -11,14 +11,14 @@ import SpriteKit
 
 class ZDBonus: SKSpriteNode {
     enum BonusType {
-        case Wind, Water, Fire, Ammo, Life
+        case wind, water, fire, ammo, life
     }
     
     let type: BonusType
     let emitter = SKEmitterNode(fileNamed: Constants.Bonus.bonusEmitterPath())
     
     required init?(coder aDecoder: NSCoder) {
-        type = BonusType.Wind
+        type = BonusType.wind
         super.init(coder: aDecoder)
     }
     
@@ -27,26 +27,26 @@ class ZDBonus: SKSpriteNode {
         self.type = type
         var image: UIImage
         switch type {
-        case .Wind:
+        case .wind:
             image = UIImage(named: Constants.ImagePath.windBonusPath())!
-            emitter.particleColor = UIColor.whiteColor()
-        case .Water:
+            emitter?.particleColor = UIColor.white
+        case .water:
             image = UIImage(named: Constants.ImagePath.waterBonusPath())!
-            emitter.particleColor = UIColor(red: 84/255.0, green: 164/255.0, blue: 255/255.0, alpha: 1)
-        case .Fire:
+            emitter?.particleColor = UIColor(red: 84/255.0, green: 164/255.0, blue: 255/255.0, alpha: 1)
+        case .fire:
             image = UIImage(named: Constants.ImagePath.fireBonusPath())!
-            emitter.particleColor = UIColor.redColor()
+            emitter?.particleColor = UIColor.red
             
-        case .Ammo:
+        case .ammo:
             image = UIImage(named: Constants.ImagePath.ammoBonusPath())!
-            emitter.particleColor = UIColor.brownColor()
+            emitter?.particleColor = UIColor.brown
             
-        case .Life:
+        case .life:
             image = UIImage(named: Constants.ImagePath.lifeBonusPath())!
-            emitter.particleColor = UIColor.greenColor()
+            emitter?.particleColor = UIColor.green
             
         }
-        emitter.particleSize = size
+        emitter?.particleSize = size
         
         super.init(texture: SKTexture(image: image), color: UIColor(), size: size)
         zPosition = 1
@@ -54,47 +54,47 @@ class ZDBonus: SKSpriteNode {
         fadeOut()
     }
     
-    private func fadeOut() {
-        let fade = SKAction.fadeAlphaTo(0, duration: 10)
-        runAction(fade) {
+    fileprivate func fadeOut() {
+        let fade = SKAction.fadeAlpha(to: 0, duration: 10)
+        run(fade, completion: {
             self.removeFromParent()
-        }
-        emitter.runAction(fade) {
-            self.emitter.removeFromParent()
+        }) 
+        emitter?.run(fade) {
+            self.emitter?.removeFromParent()
         }
     }
     
     func remove() {
         removeFromParent()
-        emitter.removeFromParent()
+        emitter?.removeFromParent()
     }
     
-    class func maybeBonusFor(enemyType: ZDEnemyShip.EnemyType) -> ZDBonus? {
+    class func maybeBonusFor(_ enemyType: ZDEnemyShip.EnemyType) -> ZDBonus? {
         let rndNum = Double(arc4random_uniform(100)) / 100.0
         let bonusSize = Constants.Bonus.bonusSize()
         
         switch enemyType {
-        case .Tank:
+        case .tank:
             if rndNum < Constants.Bonus.waterBonusChance() {
-                return ZDBonus(size: bonusSize, type: BonusType.Water)
+                return ZDBonus(size: bonusSize, type: BonusType.water)
             }
             
-        case .Speedster:
+        case .speedster:
             if rndNum < Constants.Bonus.windBonusChance() {
-                return ZDBonus(size: bonusSize, type: BonusType.Wind)
+                return ZDBonus(size: bonusSize, type: BonusType.wind)
             }
             
-        case .Ace:
+        case .ace:
             if rndNum < Constants.Bonus.fireBonusChance() {
-                return ZDBonus(size: bonusSize, type: BonusType.Fire)
+                return ZDBonus(size: bonusSize, type: BonusType.fire)
             }
             
         default:
             if rndNum < Constants.Bonus.lifeBonusChance() {
-                return ZDBonus(size: bonusSize, type: BonusType.Life)
+                return ZDBonus(size: bonusSize, type: BonusType.life)
                 
             } else if rndNum < Constants.Bonus.ammoBonusChance() {
-                return ZDBonus(size: bonusSize, type: BonusType.Ammo)
+                return ZDBonus(size: bonusSize, type: BonusType.ammo)
             }
         }
         return nil

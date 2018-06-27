@@ -13,23 +13,23 @@ class MenuGameScene: SKScene, SKPhysicsContactDelegate {
     let cannon = ZDHomeBase()
     let background = SKSpriteNode(imageNamed: Constants.ImagePath.menuBGPath)
     
-    let quickPlayShip = ZDEnemyShip(size: Constants.Menu.playShipSize, type: ZDEnemyShip.EnemyType.Scout)
-    let invasionShip = ZDEnemyShip(size: Constants.Menu.invasionShipSize, type: ZDEnemyShip.EnemyType.Tank)
+    let quickPlayShip = ZDEnemyShip(size: Constants.Menu.playShipSize, type: ZDEnemyShip.EnemyType.scout)
+    let invasionShip = ZDEnemyShip(size: Constants.Menu.invasionShipSize, type: ZDEnemyShip.EnemyType.tank)
     
     func playLoadingFade() {
-        let backdrop = SKSpriteNode(color: UIColor.blackColor(), size: Constants.screenSize)
+        let backdrop = SKSpriteNode(color: UIColor.black, size: Constants.screenSize)
         backdrop.position = Constants.screenCenter
         backdrop.zPosition = 4
         addChild(backdrop)
         
-        backdrop.runAction(Constants.Animations.BlackInAnimation()) {
+        backdrop.run(Constants.Animations.BlackInAnimation(), completion: {
             backdrop.removeFromParent()
-        }
+        }) 
     }
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         playLoadingFade()
-        physicsWorld.gravity = CGVectorMake(0, 0)
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         physicsWorld.contactDelegate = self
         
         initBackground()
@@ -38,13 +38,13 @@ class MenuGameScene: SKScene, SKPhysicsContactDelegate {
         quickPlayShip.texture = SKTexture(imageNamed: "quickPlay.png")
         quickPlayShip.position = Constants.Menu.playShipPosition
         quickPlayShip.name = "quickPlay"
-        quickPlayShip.runAction(Constants.Menu.playShipAction())
+        quickPlayShip.run(Constants.Menu.playShipAction())
         addChild(quickPlayShip)
         
         invasionShip.texture = SKTexture(imageNamed: "invasionPlay.png")
         invasionShip.position = Constants.Menu.invasionShipPosition
         invasionShip.name = "quickPlay"
-        invasionShip.runAction(Constants.Menu.invasionShipAction())
+        invasionShip.run(Constants.Menu.invasionShipAction())
         addChild(invasionShip)
         
     }
@@ -56,16 +56,16 @@ class MenuGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(background)
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         cannon.update(self)
     }
     
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Called when a touch ends */
         for touch: AnyObject in touches {
             // Create the projectile and put it where the player is
-            let location = touch.locationInNode(self)
-            let touchedNode = nodeAtPoint(location)
+            let location = touch.location(in: self)
+            let touchedNode = atPoint(location)
             
             // If the node is a bonus then gain it, if not shoot em'
             if let bonus = touchedNode as? ZDBonus {
@@ -78,11 +78,11 @@ class MenuGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func shootCannon(location: CGPoint) {
+    func shootCannon(_ location: CGPoint) {
         cannon.queueShotAt(location)
     }
     
-    func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
         var firstBody: SKPhysicsBody
         var secondBody: SKPhysicsBody
         
@@ -105,13 +105,13 @@ class MenuGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func transitionOutThen(f: () -> ()) {
-        let backdrop = SKSpriteNode(color: UIColor.blackColor(), size: Constants.screenSize)
+    func transitionOutThen(_ f: @escaping () -> ()) {
+        let backdrop = SKSpriteNode(color: UIColor.black, size: Constants.screenSize)
         backdrop.position = Constants.screenCenter
         backdrop.zPosition = 4
         addChild(backdrop)
-        backdrop.runAction(Constants.Animations.BlackOutAnimation()) {
+        backdrop.run(Constants.Animations.BlackOutAnimation(), completion: {
             f()
-        }
+        }) 
     }
 }

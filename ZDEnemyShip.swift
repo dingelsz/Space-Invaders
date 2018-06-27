@@ -32,7 +32,7 @@ import SpriteKit
 class ZDEnemyShip: SKSpriteNode {
     
     enum EnemyType: Int {
-        case Scout = 0, Tank, Speedster, Ace
+        case scout = 0, tank, speedster, ace
     }
     
     var health: Int
@@ -41,15 +41,13 @@ class ZDEnemyShip: SKSpriteNode {
     let type: EnemyType
     let level: ZDLevels.Level
     
-    let trailEmitter: SKEmitterNode
+    var trailEmitter: SKEmitterNode
     var shieldEmitter: SKEmitterNode
-    
-    var destroyAnimation = []
     
     required init?(coder aDecoder: NSCoder) {
         health = 1
         relativeSpeed = 0.5
-        type = EnemyType.Scout
+        type = EnemyType.scout
         level = ZDLevels.straightLevel()
         shieldEmitter = SKEmitterNode()
         trailEmitter = SKEmitterNode()
@@ -62,27 +60,27 @@ class ZDEnemyShip: SKSpriteNode {
         self.type = type
         var image: UIImage
         switch type {
-        case .Tank:
+        case .tank:
             health = 2
             relativeSpeed = Constants.Enemy.TankSpeed()
             image = UIImage(named: Constants.ImagePath.tankImagePath())!
             level = ZDLevels.easyLevel()
-            shieldEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTankEmitterPath())
-        case .Speedster:
+            shieldEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTankEmitterPath())!
+        case .speedster:
             health = 1
             relativeSpeed = Constants.Enemy.SpeedsterSpeed()
             image = UIImage(named: Constants.ImagePath.speedsterImagePath())!
             level = ZDLevels.fastLevel()
-            trailEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTrailEmitterPath())
-        case .Ace:
+            trailEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTrailEmitterPath())!
+        case .ace:
             health = 2
             relativeSpeed = Constants.Enemy.AceSpeed()
             image = UIImage(named: Constants.ImagePath.aceImagePath())!
             level = ZDLevels.aceLevel()
-            shieldEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTankEmitterPath())
-            shieldEmitter.particleColor = UIColor.whiteColor()
-            trailEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTrailEmitterPath())
-            trailEmitter.particleColor = UIColor.whiteColor()
+            shieldEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTankEmitterPath())!
+            shieldEmitter.particleColor = UIColor.white
+            trailEmitter = SKEmitterNode(fileNamed: Constants.Emitter.UFOTrailEmitterPath())!
+            trailEmitter.particleColor = UIColor.white
         // Scout
         default:
             health = 1
@@ -95,7 +93,7 @@ class ZDEnemyShip: SKSpriteNode {
         
         self.zPosition = 0.5
 
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: size)
+        self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = Constants.Bitmask.enemyBitmask()
         self.physicsBody?.contactTestBitMask = Constants.Bitmask.projectileBitmask()
@@ -104,7 +102,7 @@ class ZDEnemyShip: SKSpriteNode {
         initEmitter([shieldEmitter, trailEmitter])
     }
     
-    func initEmitter(emitters: [SKEmitterNode]) {
+    func initEmitter(_ emitters: [SKEmitterNode]) {
         for emitter in emitters {
             emitter.zPosition = 0.5
             emitter.advanceSimulationTime(3)
@@ -115,13 +113,13 @@ class ZDEnemyShip: SKSpriteNode {
         var type: EnemyType
         let rnd = Int(arc4random() % 100)
         if rnd < 40 {
-            type = EnemyType.Scout
+            type = EnemyType.scout
         } else if rnd < 65 {
-            type = EnemyType.Tank
+            type = EnemyType.tank
         } else if rnd < 90 {
-            type = EnemyType.Speedster
+            type = EnemyType.speedster
         } else {
-            type = EnemyType.Ace
+            type = EnemyType.ace
         }
         self.init(size: size, type: type)
         
@@ -132,7 +130,7 @@ class ZDEnemyShip: SKSpriteNode {
     }
     
     func takeHit() {
-        health--
+        health -= 1
         if health == 1 {
             shieldEmitter.removeFromParent()
         }
@@ -144,16 +142,16 @@ class ZDEnemyShip: SKSpriteNode {
     }
     
     func remove() {
-        physicsBody?.dynamic = false
-        runAction(Constants.Enemy.DestroyAnimation()) {
+        physicsBody?.isDynamic = false
+        run(Constants.Enemy.DestroyAnimation(), completion: {
             self.removeFromParent()
-        }
-        trailEmitter.runAction(Constants.Enemy.DestroyAnimation()) {
+        }) 
+        trailEmitter.run(Constants.Enemy.DestroyAnimation(), completion: {
             self.trailEmitter.removeFromParent()
-        }
-        shieldEmitter.runAction(Constants.Enemy.DestroyAnimation()) {
+        }) 
+        shieldEmitter.run(Constants.Enemy.DestroyAnimation(), completion: {
             self.shieldEmitter.removeFromParent()
-        }
+        }) 
     }
     
 }
